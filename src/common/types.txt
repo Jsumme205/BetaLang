@@ -1,0 +1,36 @@
+preproc:
+    @start Main
+    @use
+    @eval
+    @def
+    @for
+    @defun
+    @external
+    @end
+
+example eval token tree:
+    @eval ARCH == ARM:
+        defun Main(args: [Str]) => Int32 {
+            let out = std::Output(Output.STDOUT).unwrap();
+            out.writeln("Hello Arm!").unwrap();
+        }
+    @end
+
+                head
+                  |
+            |   @eval     |
+            op          body
+        ARCH  ARM         |
+                        defun Main
+                    |               |
+                   args            body
+                    |               |                                     |
+                args: [Str]        assign                             objcall
+                                |           |                           |       |     
+                              out         chain                        obj    chain
+                                        |           |       |           |    |  
+                                       call       call          out 
+                            |        |       |    |       |      |
+                         return      args:   defun  args    defun  return
+                            |       |       |       |      |        |
+          Result<Output, Int32>  Int32   Output  none  unwrap()   Output
